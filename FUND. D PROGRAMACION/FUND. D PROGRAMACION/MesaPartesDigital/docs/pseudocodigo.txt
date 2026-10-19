@@ -1,0 +1,95 @@
+ALGORITMO MesaPartesDigital
+
+INICIO
+    CargarArchivo()                              // lee expedientes.txt si existe
+    MostrarExpedientes()                         // llena la tabla recorriendo los arreglos
+    MIENTRAS la ventana esté abierta
+        Esperar acción del usuario
+        SEGUN el botón presionado
+            Registrar:     RegistrarExpediente()
+            Buscar:        BuscarExpediente()
+            Mostrar todos: MostrarExpedientes()
+            Ordenar:       OrdenarExpedientes()
+        FIN SEGUN
+    FIN MIENTRAS
+FIN
+
+PROCEDIMIENTO RegistrarExpediente()
+    SI ValidarDatos() = falso ENTONCES RETORNAR
+    codigo <- MAYUSCULAS(QuitarEspacios(txtCodigo))
+    ciudadano <- NormalizarNombre(txtCiudadano)
+    tipo <- cmbDocumento ; fecha <- dtpFecha ; asunto <- LimpiarTexto(txtAsunto)
+    SI Cantidad >= CAPACIDAD ENTONCES
+        Mostrar "Almacén lleno" ; RETORNAR
+    FIN SI
+    Codigos[Cantidad] <- codigo ; Ciudadanos[Cantidad] <- ciudadano
+    Tipos[Cantidad] <- tipo ; Asuntos[Cantidad] <- asunto
+    Fechas[Cantidad] <- fecha ; Estados[Cantidad] <- "Recibido"
+    Cantidad <- Cantidad + 1
+    GuardarArchivo()
+    MostrarExpedientes()
+    LimpiarCampos()
+FIN PROCEDIMIENTO
+
+FUNCION ValidarDatos() : lógico
+    SI codigo está vacío           ENTONCES avisar ; RETORNAR falso
+    SI NO EsCodigoValido(codigo)   ENTONCES avisar ; RETORNAR falso
+    SI ExisteCodigo(codigo)        ENTONCES avisar ; RETORNAR falso   // código duplicado
+    SI NO EsNombreValido(ciudadano) ENTONCES avisar ; RETORNAR falso
+    SI fecha > hoy                 ENTONCES avisar ; RETORNAR falso
+    SI NO EsAsuntoValido(asunto)   ENTONCES avisar ; RETORNAR falso
+    RETORNAR verdadero
+FIN FUNCION
+
+FUNCION BuscarLineal(codigo) : entero
+    PARA i <- 0 HASTA Cantidad - 1 HACER
+        SI Codigos[i] = codigo (sin distinguir mayúsculas) ENTONCES RETORNAR i
+    FIN PARA
+    RETORNAR -1
+FIN FUNCION
+
+FUNCION BuscarBinaria(codigo) : entero              // requiere códigos ordenados
+    inicio <- 0 ; fin <- Cantidad - 1
+    MIENTRAS inicio <= fin HACER
+        medio <- (inicio + fin) DIV 2
+        SI Codigos[medio] = codigo ENTONCES RETORNAR medio
+        SI Codigos[medio] < codigo ENTONCES inicio <- medio + 1
+        SINO fin <- medio - 1
+    FIN MIENTRAS
+    RETORNAR -1
+FIN FUNCION
+
+PROCEDIMIENTO BuscarExpediente()
+    codigo <- MAYUSCULAS(QuitarEspacios(txtBuscar))
+    SI EstaOrdenadoPorCodigo() ENTONCES pos <- BuscarBinaria(codigo)
+    SINO pos <- BuscarLineal(codigo)
+    SI pos = -1 ENTONCES Mostrar "No existe"
+    SINO Mostrar en la tabla solo la fila pos
+FIN PROCEDIMIENTO
+
+PROCEDIMIENTO OrdenarPorCodigo()                    // ordenamiento por selección
+    PARA i <- 0 HASTA Cantidad - 2 HACER
+        menor <- i
+        PARA j <- i + 1 HASTA Cantidad - 1 HACER
+            SI Codigos[j] < Codigos[menor] ENTONCES menor <- j
+        FIN PARA
+        SI menor <> i ENTONCES Intercambiar(i, menor)    // en los 6 arreglos
+    FIN PARA
+FIN PROCEDIMIENTO
+
+PROCEDIMIENTO GuardarArchivo()
+    PARA i <- 0 HASTA Cantidad - 1 HACER
+        lineas[i] <- Codigos[i] + "|" + Ciudadanos[i] + "|" + Tipos[i] + "|"
+                     + Asuntos[i] + "|" + Fechas[i] + "|" + Estados[i]
+    FIN PARA
+    EscribirTodasLasLineas(expedientes.txt, lineas)
+FIN PROCEDIMIENTO
+
+PROCEDIMIENTO CargarArchivo()
+    SI el archivo no existe ENTONCES RETORNAR
+    PARA cada línea del archivo HACER
+        partes <- Dividir(línea, "|")
+        SI cantidad(partes) = 6 ENTONCES Agregar partes a los arreglos
+        SINO ignorar la línea
+    FIN PARA
+FIN PROCEDIMIENTO

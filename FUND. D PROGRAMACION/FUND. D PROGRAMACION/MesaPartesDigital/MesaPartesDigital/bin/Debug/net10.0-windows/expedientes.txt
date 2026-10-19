@@ -1,0 +1,5 @@
+EXP001|Jhems Terry|Solicitud|-----|2026-10-18|Recibido
+EXP002|Eros Meneses|Carta|Carta de agradecimiento a la gerencia|2026-10-18|Recibido
+EXP003|Luis Ramos|Reclamo|Reclamo por recojo de residuos sólidos|2026-10-18|Recibido
+EXP004|Ana Torres|Solicitud|Solicitud de constancia de posesión|2026-10-18|Recibido
+EXP005|Nicolas Salazar|Carta|Carta de Renuncia|2026-10-18|Recibido
