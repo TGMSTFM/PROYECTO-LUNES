@@ -1,3 +1,0 @@
-EXP001|Ana Torres|Solicitud|Solicitud de constancia de posesión|2026-10-05|Recibido
-EXP002|Luis Ramos|Reclamo|Reclamo por recojo de residuos sólidos|2026-10-05|Recibido
-EXP003|María Quispe|Carta|Carta de agradecimiento a la gerencia|2026-10-06|Recibido
